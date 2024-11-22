@@ -169,7 +169,6 @@
     "ms": "^2.0.0",
     "natural-compare": "^1.4.0",
     "negotiator": "^0.6.3",
-    "nodemon": "^3.1.7",
     "normalize-path": "^3.0.0",
     "object-inspect": "^1.13.3",
     "object-keys": "^1.1.1",
@@ -268,7 +267,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "npx eslint ."
+    "lint": "npx eslint .",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "author": "Damian Lavin",
   "license": "ISC",
@@ -277,6 +278,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-import": "^2.31.0",
+    "nodemon": "^3.1.7",
     "prettier": "^2.8.8"
   }
 }
