@@ -64,12 +64,8 @@
     "es-to-primitive": "^1.2.1",
     "escape-html": "^1.0.3",
     "escape-string-regexp": "^4.0.0",
-    "eslint": "^8.57.1",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^8.10.0",
     "eslint-import-resolver-node": "^0.3.9",
     "eslint-module-utils": "^2.12.0",
-    "eslint-plugin-import": "^2.31.0",
     "eslint-scope": "^7.2.2",
     "eslint-visitor-keys": "^3.4.3",
     "espree": "^9.6.1",
@@ -197,7 +193,6 @@
     "picomatch": "^2.3.1",
     "possible-typed-array-names": "^1.0.0",
     "prelude-ls": "^1.2.1",
-    "prettier": "^2.8.8",
     "proxy-addr": "^2.0.7",
     "pstree.remy": "^1.1.8",
     "punycode": "^2.3.1",
@@ -272,8 +267,16 @@
     "yocto-queue": "^0.1.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "npx eslint ."
   },
   "author": "Damian Lavin",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.10.0",
+    "eslint-plugin-import": "^2.31.0",
+    "prettier": "^2.8.8"
+  }
 }
