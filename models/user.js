@@ -4,13 +4,13 @@ const validator = require("validator");
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    require: [true, "The name field is required."],
+    required: [true, "The name field is required."],
     minlength: 2,
     maxlength: 30,
   },
   avatar: {
     type: String,
-    require: [true, "The avatar field is required."],
+    required: [true, "The avatar field is required."],
     validate: {
       validator(value) {
         return validator.isURL(value);

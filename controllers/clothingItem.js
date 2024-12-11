@@ -1,19 +1,23 @@
 const ClothingItem = require("../models/clothingItem");
 
 const createItem = (req, res) => {
-  console.log(req);
-  console.log(req.body);
+  // console.log(req);
+  // console.log(req.body);
+  // console.log(req.user._id); causes a TypeError
 
-  const { name, weather, imageURL, owner, likes, createdAt } = req.body;
+  const { name, weather, imageUrl, owner, likes, createdAt } = req.body;
 
-  ClothingItem.create({ name, weather, imageURL, owner, likes, createdAt })
+  ClothingItem.create({ name, weather, imageUrl, owner, likes, createdAt })
     .then((item) => {
       res.status(200).send({ data: item });
-      // console.log(item);
-      // res.send({ data: item });
     })
     .catch((e) => {
-      res.status(500).send({ message: "Error from createItem:", e });
+      if (e.name === "ValidationError") {
+        return res.status(400).send({ message: e.message });
+      }
+      return res.status(500).send({
+        message: `Error! Name: ${e.name}, Message: ${e.message}.`,
+      });
     });
 };
 
@@ -27,9 +31,9 @@ const getItems = (req, res) => {
 
 const updateItem = (req, res) => {
   const { itemId } = req.params;
-  const { imageURL } = req.body;
+  const { imageUrl } = req.body;
 
-  ClothingItem.findByIdAndUpdate(itemId, { $set: { imageURL } })
+  ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
     .orFail()
     .then((item) => res.status(200).send({ data: item }))
     .catch((e) => {
@@ -39,7 +43,7 @@ const updateItem = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
-  console.log(itemId);
+
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
     .then((item) => res.status(204))
