@@ -1,13 +1,13 @@
 const ClothingItem = require("../models/clothingItem");
 
 const createItem = (req, res) => {
-  // console.log(req);
-  // console.log(req.body);
-  // console.log(req.user._id); causes a TypeError
+  const { name, weather, imageUrl } = req.body;
+  const owner = req.user._id;
 
-  const { name, weather, imageUrl, owner, likes, createdAt } = req.body;
-
-  ClothingItem.create({ name, weather, imageUrl, owner, likes, createdAt })
+  // name, weather, and imageUrl are the only thing that should
+  // come from the req.body
+  // eventually add like and createdAt properties below
+  ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
       res.status(200).send({ data: item });
     })
@@ -16,7 +16,7 @@ const createItem = (req, res) => {
         return res.status(400).send({ message: e.message });
       }
       return res.status(500).send({
-        message: `Error! Name: ${e.name}, Message: ${e.message}.`,
+        message: `"An error has occurred on the server.`,
       });
     });
 };
@@ -25,7 +25,7 @@ const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
     .catch((e) => {
-      res.status(500).send({ message: "Error from getItems:", e });
+      res.status(500).send({ message: "An error has occurred on the server." });
     });
 };
 
@@ -37,9 +37,11 @@ const updateItem = (req, res) => {
     .orFail()
     .then((item) => res.status(200).send({ data: item }))
     .catch((e) => {
-      res.status(500).send({ message: "Error from updateItem:", e });
+      res.status(500).send({ message: "An error has occurred on the server." });
     });
 };
+
+// const likeItem = () => {};
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
@@ -49,7 +51,7 @@ const deleteItem = (req, res) => {
     .then((item) => res.status(204))
     .send({})
     .catch((e) => {
-      res.status(500).send({ message: "Error from deleteItem:", e });
+      res.status(500).send({ message: "An error has occurred on the server." });
     });
 };
 

@@ -25,15 +25,15 @@ const clothingItemSchema = new mongoose.Schema({
   },
   owner: {
     //a link to the item author's model of the ObjectId type
-    type: mongoose.ObjectId,
+    // type: mongoose.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
   // Bottom two elements are NOT required
   likes: {
     //list of users who liked the item, an ObjectId array with
     //a reference to the user modal (empty by default)
-    type: mongoose.ObjectId,
-    default: "",
+    type: { type: mongoose.Schema.Types.ObjectId },
   },
   createdAt: {
     type: { type: Date, default: Date.now },
