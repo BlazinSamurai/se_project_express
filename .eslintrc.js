@@ -27,11 +27,7 @@ module.exports = {
     // "arrow-body-style": ["error", "always"],
     // "arrow-body-style": ["error", "as-needed"],
     // "arrow-body-style": ["error", "as-needed", { requireReturnForObjectLiteral: true },],
-    "arrow-body-style": [
-      "error",
-      "as-needed",
-      { requireReturnForObjectLiteral: false },
-    ],
+    // "arrow-body-style": ["error","as-needed",{ requireReturnForObjectLiteral: false },],
     "no-else-return": ["error", { allowElseIf: true }],
   },
 };
