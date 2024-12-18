@@ -25,10 +25,12 @@ module.exports = {
     "no-unused-vars": ["error", { vars: "local" }],
     "spaced-comment": ["error", "always", { markers: ["//"] }],
     // "arrow-body-style": ["error", "always"],
+    // "arrow-body-style": ["error", "as-needed"],
+    // "arrow-body-style": ["error", "as-needed", { requireReturnForObjectLiteral: true },],
     "arrow-body-style": [
       "error",
       "as-needed",
-      { requireReturnForObjectLiteral: true },
+      { requireReturnForObjectLiteral: false },
     ],
     "no-else-return": ["error", { allowElseIf: true }],
   },
