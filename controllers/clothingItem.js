@@ -23,7 +23,9 @@ const createItem = (req, res) => {
 
 const getItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => res.status(200).send(items))
+    .then((items) => {
+      res.status(200).send(items);
+    })
     .catch(() => {
       return res
         .status(500)
@@ -37,7 +39,9 @@ const updateItem = (req, res) => {
 
   ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
     .orFail()
-    .then((item) => res.status(200).send({ data: item }))
+    .then((item) => {
+      res.status(200).send({ data: item });
+    })
     .catch((e) => {
       if (e.name === "ValidationError") {
         return res.status(400).send({ message: e.message });
@@ -60,7 +64,9 @@ const likeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((item) => res.status(200).send({ data: item }))
+    .then((item) => {
+      res.status(200).send({ data: item });
+    })
     .catch((e) => {
       if (e.name === "CastError") {
         return res.status(400).send({ message: e.message });
@@ -78,7 +84,9 @@ const deleteItem = (req, res) => {
 
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then((item) => res.status(200).send({ data: item }))
+    .then((item) => {
+      res.status(200).send({ data: item });
+    })
     .catch((e) => {
       if (e.name === "CastError") {
         return res.status(400).send({ message: e.message });
@@ -103,7 +111,9 @@ const unlikeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((item) => res.status(200).send({ data: item }))
+    .then((item) => {
+      res.status(200).send({ data: item });
+    })
     .catch((e) => {
       if (e.name === "CastError") {
         return res.status(400).send({ message: e.message });
