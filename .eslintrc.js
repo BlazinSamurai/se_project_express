@@ -23,6 +23,8 @@ module.exports = {
     "no-console": "off",
     "no-underscore-dangle": ["error", { allow: ["_id"] }],
     "no-unused-vars": ["error", { vars: "local" }],
-    "spaced-comment": ["error", "always", { markers: ["/"] }],
+    "spaced-comment": ["error", "always", { markers: ["//"] }],
+    "arrow-body-style": ["error", "as-needed"],
+    "no-else-return": ["error", { allowElseIf: true }],
   },
 };
