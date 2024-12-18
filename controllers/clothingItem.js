@@ -24,8 +24,10 @@ const createItem = (req, res) => {
 const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
-    .catch((e) => {
-      res.status(500).send({ message: "An error has occurred on the server." });
+    .catch(() => {
+      return res
+        .status(500)
+        .send({ message: "An error has occurred on the server." });
     });
 };
 
@@ -48,7 +50,6 @@ const updateItem = (req, res) => {
 
 const likeItem = (req, res) => {
   const { itemId } = req.params;
-  const { imageUrl } = req.body;
 
   ClothingItem.findByIdAndUpdate(
     itemId,
