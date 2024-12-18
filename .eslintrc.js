@@ -24,7 +24,12 @@ module.exports = {
     "no-underscore-dangle": ["error", { allow: ["_id"] }],
     "no-unused-vars": ["error", { vars: "local" }],
     "spaced-comment": ["error", "always", { markers: ["//"] }],
-    "arrow-body-style": ["error", "always"],
+    // "arrow-body-style": ["error", "always"],
+    "arrow-body-style": [
+      "error",
+      "as-needed",
+      { requireReturnForObjectLiteral: true },
+    ],
     "no-else-return": ["error", { allowElseIf: true }],
   },
 };
