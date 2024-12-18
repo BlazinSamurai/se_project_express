@@ -54,7 +54,7 @@ const likeItem = (req, res) => {
   ClothingItem.findByIdAndUpdate(
     itemId,
     {
-      //$addToSet — to add an item to the array if it's not there yet
+      // $addToSet — to add an item to the array if it's not there yet
       $addToSet: { likes: req.user._id },
     },
     { new: true }
