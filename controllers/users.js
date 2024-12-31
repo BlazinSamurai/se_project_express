@@ -11,11 +11,11 @@ const getUsers = (req, res) => {
     .then((users) => {
       res.status(OKAY_STATUS).send(users);
     })
-    .catch((err) => {
-      return res
+    .catch(() =>
+      res
         .status(DEFAULT)
-        .send({ message: "An error has occurred on the server." });
-    });
+        .send({ message: "An error has occurred on the server." })
+    );
 };
 
 const createUsers = (req, res) => {
@@ -46,7 +46,8 @@ const getUser = (req, res) => {
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND).send({ message: err.message });
-      } else if (err.name === "CastError") {
+      }
+      if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
       return res

@@ -32,11 +32,11 @@ const getItems = (req, res) => {
     .then((items) => {
       res.status(OKAY_STATUS).send(items);
     })
-    .catch(() => {
-      return res
+    .catch(() =>
+      res
         .status(DEFAULT)
-        .send({ message: "An error has occurred on the server." });
-    });
+        .send({ message: "An error has occurred on the server." })
+    );
 };
 
 const likeItem = (req, res) => {
@@ -57,7 +57,8 @@ const likeItem = (req, res) => {
     .catch((e) => {
       if (e.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: e.message });
-      } else if (e.name === "DocumentNotFoundError") {
+      }
+      if (e.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND).send({ message: e.message });
       }
       return res
@@ -77,7 +78,8 @@ const deleteItem = (req, res) => {
     .catch((e) => {
       if (e.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: e.message });
-      } else if (e.name === "DocumentNotFoundError") {
+      }
+      if (e.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND).send({ message: e.message });
       }
       return res
@@ -104,7 +106,8 @@ const unlikeItem = (req, res) => {
     .catch((e) => {
       if (e.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: e.message });
-      } else if (e.name === "DocumentNotFoundError") {
+      }
+      if (e.name === "DocumentNotFoundError") {
         return res.status(NOT_FOUND).send({ message: e.message });
       }
       return res
