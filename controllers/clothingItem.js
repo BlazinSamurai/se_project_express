@@ -1,4 +1,10 @@
 const ClothingItem = require("../models/clothingItem");
+const {
+  BAD_REQUEST,
+  NOT_FOUND,
+  DEFAULT,
+  OKAY_STATUS,
+} = require("../utils/errors");
 
 const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
@@ -9,14 +15,14 @@ const createItem = (req, res) => {
   // eventually add like and createdAt properties below
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
-      res.status(200).send({ data: item });
+      res.status(OKAY_STATUS).send({ data: item });
     })
     .catch((e) => {
       if (e.name === "ValidationError") {
-        return res.status(400).send({ message: e.message });
+        return res.status(BAD_REQUEST).send({ message: e.message });
       }
-      return res.status(500).send({
-        message: `"An error has occurred on the server.`,
+      return res.status(DEFAULT).send({
+        message: "An error has occurred on the server.",
       });
     });
 };
@@ -24,30 +30,11 @@ const createItem = (req, res) => {
 const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => {
-      res.status(200).send(items);
+      res.status(OKAY_STATUS).send(items);
     })
     .catch(() => {
       return res
-        .status(500)
-        .send({ message: "An error has occurred on the server." });
-    });
-};
-
-const updateItem = (req, res) => {
-  const { itemId } = req.params;
-  const { imageUrl } = req.body;
-
-  ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
-    .orFail()
-    .then((item) => {
-      res.status(200).send({ data: item });
-    })
-    .catch((e) => {
-      if (e.name === "ValidationError") {
-        return res.status(400).send({ message: e.message });
-      }
-      return res
-        .status(500)
+        .status(DEFAULT)
         .send({ message: "An error has occurred on the server." });
     });
 };
@@ -65,16 +52,16 @@ const likeItem = (req, res) => {
   )
     .orFail()
     .then((item) => {
-      res.status(200).send({ data: item });
+      res.status(OKAY_STATUS).send({ data: item });
     })
     .catch((e) => {
       if (e.name === "CastError") {
-        return res.status(400).send({ message: e.message });
+        return res.status(BAD_REQUEST).send({ message: e.message });
       } else if (e.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: e.message });
+        return res.status(NOT_FOUND).send({ message: e.message });
       }
       return res
-        .status(500)
+        .status(DEFAULT)
         .send({ message: "An error has occurred on the server." });
     });
 };
@@ -85,16 +72,16 @@ const deleteItem = (req, res) => {
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
     .then((item) => {
-      res.status(200).send({ data: item });
+      res.status(OKAY_STATUS).send({ data: item });
     })
     .catch((e) => {
       if (e.name === "CastError") {
-        return res.status(400).send({ message: e.message });
+        return res.status(BAD_REQUEST).send({ message: e.message });
       } else if (e.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: e.message });
+        return res.status(NOT_FOUND).send({ message: e.message });
       }
       return res
-        .status(500)
+        .status(DEFAULT)
         .send({ message: "An error has occurred on the server." });
     });
 };
@@ -112,16 +99,16 @@ const unlikeItem = (req, res) => {
   )
     .orFail()
     .then((item) => {
-      res.status(200).send({ data: item });
+      res.status(OKAY_STATUS).send({ data: item });
     })
     .catch((e) => {
       if (e.name === "CastError") {
-        return res.status(400).send({ message: e.message });
+        return res.status(BAD_REQUEST).send({ message: e.message });
       } else if (e.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: e.message });
+        return res.status(NOT_FOUND).send({ message: e.message });
       }
       return res
-        .status(500)
+        .status(DEFAULT)
         .send({ message: "An error has occurred on the server." });
     });
 };
@@ -129,7 +116,6 @@ const unlikeItem = (req, res) => {
 module.exports = {
   createItem,
   getItems,
-  updateItem,
   likeItem,
   deleteItem,
   unlikeItem,
