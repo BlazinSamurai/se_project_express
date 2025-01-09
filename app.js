@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const mainRouter = require("./routes/index");
 
+// const PORT = process.env.PORT || 3001;
 const { PORT = 3001 } = process.env;
 
 // Connecting to the database
@@ -17,18 +18,18 @@ mongoose
 
 const app = express();
 
-// Authorization middleware
-app.use((req, res, next) => {
-  req.user = {
-    _id: "675884c3d452aa3d696ff714",
-  };
-  next();
-});
+// Order of Middleware:
+// app.use(express.json()) and app.use('/', mainRouter)
+// should come after your authorization middleware to
+// ensure that the user object is available across all routes.
 
-// Order of Middleware: app.use(express.json())
-// and app.use('/', mainRouter) should come after
-// your authorization middleware to ensure that the
-// user object is available across all routes.
+// Authorization middleware
+// app.use((req, res, next) => {
+//   req.user = {
+//     _id: "675884c3d452aa3d696ff714",
+//   };
+//   next();
+// });
 
 // JSON parsing middleware
 app.use(express.json());
