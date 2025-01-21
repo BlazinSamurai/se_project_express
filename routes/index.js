@@ -7,6 +7,8 @@ const { NOT_FOUND } = require("../utils/errors");
 router.use("/users", userRouter);
 router.use("/items", clothingItem);
 
+// some routes don't require auth
+// for example, register and login
 router.post("/signin", login);
 router.post("/signup", createUser);
 

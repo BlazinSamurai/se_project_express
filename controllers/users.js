@@ -21,7 +21,7 @@ const getUsers = (req, res) => {
     );
 };
 
-const getCurrentUser = (req, res) => {
+const getUser = (req, res) => {
   const { userId } = req;
   User.findById(userId)
     .orFail()
@@ -47,31 +47,37 @@ const getCurrentUser = (req, res) => {
 
 const patchCurrentUser = (req, res) => {
   const { name, avatar } = req.body;
-  // console.log(`Current user being patched! Here are the result: ${res}`);
+
   //This route should only allow modification of the name and avatar fields.
-  User.findByIdAndUpdate({
-    name,
-    avatar,
-  })
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, avatar },
+    { new: true, runValidators: true } // Return the updated document
+  )
     .then((user) => {
       res.status(OKAY_STATUS).send(user);
     })
-    .then((newUser) => {
-      res.send(newUser);
+    .catch((err) => {
+      if (err.name === "CastError") {
+        return res.status(BAD_REQUEST).send({ message: err.message });
+      }
+      return res.send({
+        message: `Error in patchCurrentUser. Name:${err.name}, Status:${err.status}, Code:${err.code}, Message:${err.message}`,
+      });
     });
 };
 
 //signup
 const createUser = (req, res) => {
-  const { name, avatar } = req.body;
-  const email = req.body.email;
+  // const { name, avatar } = req.body;
+  // const email = req.body.email;
 
   // hashing the password
   bcrypt.hash(req.body.password, 10).then((hash) =>
     User.create({
-      name,
-      avatar,
-      email,
+      name: req.body,
+      avatar: req.body,
+      email: req.body.email,
       password: hash, // adding the hash to the database
     })
       .then((user) => {
@@ -115,7 +121,9 @@ const login = (req, res) => {
           .send({ message: `Should be 400 error: ${err.message}.` });
       }
       if (err.message === "Incorrect email or password") {
-        return res.status(UNAUTH_REQUEST).send({ message: err.message });
+        return res
+          .status(UNAUTH_REQUEST)
+          .send({ message: "in login," + err.message });
       }
       return res.send({
         message: `Error in login, Status: ${err.status}, Code: ${err.code}, Message: ${err.message}!`,
@@ -125,7 +133,7 @@ const login = (req, res) => {
 
 module.exports = {
   getUsers,
-  getCurrentUser,
+  getUser,
   patchCurrentUser,
   createUser,
   login,
