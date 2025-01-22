@@ -13,7 +13,7 @@ const NOT_FOUND = 404;
 
 // 409 - a client was unable to create or update a resource
 // because of a conflict with the resource's current state
-// const CONFLICTING_REQ = 409;
+const CONFLICTING_REQ = 409;
 
 // 500 — default error. Accompanied by the message: "An
 // error has occurred on the server."
@@ -26,6 +26,7 @@ module.exports = {
   BAD_REQUEST,
   UNAUTH_REQUEST,
   NOT_FOUND,
+  CONFLICTING_REQ,
   DEFAULT,
   OKAY_STATUS,
 };

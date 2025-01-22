@@ -3,10 +3,11 @@ const bcrypt = require("bcryptjs");
 const { JWT_SECRET } = require("../utils/config");
 const {
   OKAY_STATUS, //200
-  DEFAULT, //500
   BAD_REQUEST, //400
   UNAUTH_REQUEST, //401
   NOT_FOUND, //404
+  CONFLICTING_REQ, //409
+  DEFAULT, //500
 } = require("../utils/errors");
 
 const getUser = (req, res) => {
@@ -60,42 +61,36 @@ const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
 
   // hashing the password
-  // bcrypt
-  //   .hash(password, 10)
-  //   .then((hash) =>
-  //     User.create({
-  //       name,
-  //       avatar,
-  //       email,
-  //       password: hash, // adding the hash to the database
-  //     })
-  //   )
-  User.create({
-    name,
-    avatar,
-    email,
-    password, // adding the hash to the database
-  })
+  bcrypt
+    .hash(password, 10)
+    .then((hash) =>
+      User.create({
+        name,
+        avatar,
+        email,
+        password: hash, // adding the hash to the database
+      })
+    )
     .then((user) => {
-      // res.status(OKAY_STATUS).send({
-      //   name: user.name,
-      //   avatar: user.avatar,
-      //   email: user.email,
-      //   _id: user._id,
-      // });
-      res.send(user);
+      res.status(OKAY_STATUS).send({
+        name: user.name,
+        avatar: user.avatar,
+        email: user.email,
+        _id: user._id,
+      });
+      // res.send(user);
     })
     .catch((err) => {
       if (err.code == "11000") {
         return res
-          .status(BAD_REQUEST)
+          .status(CONFLICTING_REQ)
           .send({ message: "Duplicatation Error." });
       }
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
       return res.send({
-        message: `Error in createUser, Name: ${err.name}, Status: ${err.status}, message: ${err.message}.`,
+        message: `Error in createUser`,
       });
     });
 };

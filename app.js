@@ -1,7 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const mainRouter = require("./routes/index");
-const auth = require("./middlewares/auth");
 
 // const PORT = process.env.PORT || 3001;
 const { PORT = 3001 } = process.env;
@@ -23,10 +22,6 @@ const app = express();
 // app.use(express.json()) and app.use('/', mainRouter)
 // should come after your authorization middleware to
 // ensure that the user object is available across all routes.
-
-// authorization
-// add the middleware to the entire application
-app.use(auth);
 
 // JSON parsing middleware
 app.use(express.json());
