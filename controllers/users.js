@@ -9,18 +9,6 @@ const {
   NOT_FOUND, //404
 } = require("../utils/errors");
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => {
-      res.status(OKAY_STATUS).send(users);
-    })
-    .catch(() =>
-      res
-        .status(DEFAULT)
-        .send({ message: "An error has occurred on the server." })
-    );
-};
-
 const getUser = (req, res) => {
   const { userId } = req;
   User.findById(userId)
@@ -69,34 +57,47 @@ const patchCurrentUser = (req, res) => {
 
 //signup
 const createUser = (req, res) => {
-  // const { name, avatar } = req.body;
-  // const email = req.body.email;
+  const { name, avatar, email, password } = req.body;
 
   // hashing the password
-  bcrypt.hash(req.body.password, 10).then((hash) =>
-    User.create({
-      name: req.body,
-      avatar: req.body,
-      email: req.body.email,
-      password: hash, // adding the hash to the database
+  // bcrypt
+  //   .hash(password, 10)
+  //   .then((hash) =>
+  //     User.create({
+  //       name,
+  //       avatar,
+  //       email,
+  //       password: hash, // adding the hash to the database
+  //     })
+  //   )
+  User.create({
+    name,
+    avatar,
+    email,
+    password, // adding the hash to the database
+  })
+    .then((user) => {
+      // res.status(OKAY_STATUS).send({
+      //   name: user.name,
+      //   avatar: user.avatar,
+      //   email: user.email,
+      //   _id: user._id,
+      // });
+      res.send(user);
     })
-      .then((user) => {
-        res.status(OKAY_STATUS).send(user);
-      })
-      .catch((err) => {
-        if (err.code == "11000") {
-          return res
-            .status(BAD_REQUEST)
-            .send({ message: "Duplicatation Error." });
-        }
-        if (err.name === "ValidationError") {
-          return res.status(BAD_REQUEST).send({ message: err.message });
-        }
-        return res.send({
-          message: `Error in createUser, Name: ${err.name}, Status: ${err.status}, message: ${err.message}.`,
-        });
-      })
-  );
+    .catch((err) => {
+      if (err.code == "11000") {
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Duplicatation Error." });
+      }
+      if (err.name === "ValidationError") {
+        return res.status(BAD_REQUEST).send({ message: err.message });
+      }
+      return res.send({
+        message: `Error in createUser, Name: ${err.name}, Status: ${err.status}, message: ${err.message}.`,
+      });
+    });
 };
 
 //signin
@@ -132,7 +133,6 @@ const login = (req, res) => {
 };
 
 module.exports = {
-  getUsers,
   getUser,
   patchCurrentUser,
   createUser,
