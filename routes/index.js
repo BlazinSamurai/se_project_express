@@ -7,6 +7,8 @@ const auth = require("../middlewares/auth");
 
 router.post("/signup", createUser);
 
+// first we'll call 'auth' and then,
+// if the auth is successful, 'login'
 router.post("/signin", auth, login);
 
 router.use("/items", clothingItem);

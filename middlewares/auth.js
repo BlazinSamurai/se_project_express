@@ -19,23 +19,24 @@ const extractBearerToken = (header) => {
 // to the user object and call next()
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
-  console.log("Checking header exists . . . ");
+  //
+  console.log(`Authorization header: ${authorization}`); // Log incoming header
 
   // let's check the header exists and starts with 'Bearer '
   if (!authorization || !authorization.startsWith("Bearer ")) {
-    console.table(req.headers);
-    console.log(`authorization: ${authorization}.`);
+    console.error("Authorization header missing or incorrectly formatted.");
     return handleAuthError(res);
   }
 
   // getting the token
   const token = extractBearerToken(authorization);
+  console.log(`Extracted Token: ${token}`); // Log extracted token
   let payload;
 
   try {
     // trying to verify the token
-    console.log("Verifing token . . .");
     payload = jwt.verify(token, JWT_SECRET);
+    console.log(`Payload: ${JSON.stringify(payload)}`); // Log payload
   } catch (err) {
     return handleAuthError(res);
   }
