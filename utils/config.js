@@ -1,5 +1,3 @@
-const JWT_SECRET = 12336099;
+const JWT_SECRET = "the-most-secret-key";
 
-module.exports = {
-  JWT_SECRET,
-};
+module.exports = { JWT_SECRET };

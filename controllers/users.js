@@ -50,9 +50,9 @@ const patchCurrentUser = (req, res) => {
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
-      return res.send({
-        message: `Error in patchCurrentUser. Name:${err.name}, Status:${err.status}, Code:${err.code}, Message:${err.message}`,
-      });
+      return res
+        .status(DEFAULT)
+        .send({ message: "An error has occurred on the server." });
     });
 };
 
@@ -89,42 +89,51 @@ const createUser = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
-      return res.send({
-        message: `Error in createUser`,
-      });
+      return res
+        .status(DEFAULT)
+        .send({ message: "An error has occurred on the server." });
     });
 };
 
 //signin
 const login = (req, res) => {
-  const { email, password } = req.body;
+  const { email } = req.body.email;
+  const { password } = req.body.password;
+  console.log(`email: ${email}, password: ${password}`);
 
-  return User.findUserByCredentials(email, password)
-    .then((user) => {
-      //authentication successful! user is in the user variable
-      //the controller should create a JSON web token (JWT) that expires after a week
-      //JWT_SECRET contains a value of your secret key for the signature
-      //Once the JWT has been created, it should be sent to the client.
-      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
-        expiresIn: "7d",
-      });
-      res.send({ token });
-    })
-    .catch((err) => {
-      if (err.name === "ReferenceError") {
+  if (!email || !password) {
+    return res
+      .status(BAD_REQUEST)
+      .send({ message: "Email and password must be provided." });
+  }
+
+  return (
+    User.findUserByCredentials(email, password)
+      // User.findOne({ email }).select("+password")
+      //
+      .then((user) => {
+        //authentication successful!
+        //the controller should create a JSON web token (JWT) that expires after a week
+        //JWT_SECRET contains a value of your secret key for the signature
+        //Once the JWT has been created, it should be sent to the client.
+        const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+          expiresIn: "7d",
+        });
+        console.log(`Token: ${token}.`);
+        res.status(200).send(token);
+      })
+      .catch((err) => {
+        if (err.name === "ReferenceError") {
+          return res.status(BAD_REQUEST).send({ message: err.message });
+        }
+        if (err.message === "Incorrect email or password") {
+          return res.status(BAD_REQUEST).send({ message: err.message });
+        }
         return res
-          .status(BAD_REQUEST)
-          .send({ message: `Should be 400 error: ${err.message}.` });
-      }
-      if (err.message === "Incorrect email or password") {
-        return res
-          .status(UNAUTH_REQUEST)
-          .send({ message: "in login," + err.message });
-      }
-      return res.send({
-        message: `Error in login, Status: ${err.status}, Code: ${err.code}, Message: ${err.message}!`,
-      });
-    });
+          .status(DEFAULT)
+          .send({ message: "An error has occurred on the server." });
+      })
+  );
 };
 
 module.exports = {
