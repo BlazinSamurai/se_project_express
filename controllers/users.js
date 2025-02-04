@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
 const {
   OKAY_STATUS, //200
