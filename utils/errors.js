@@ -6,6 +6,9 @@ const BAD_REQUEST = 400;
 // 401 - an HTTP status code that indicates "Unauthorized" access
 const UNAUTH_REQUEST = 401;
 
+// 403
+const UNAUTH_USER = 403;
+
 // 404 — there is no user or clothing item with the
 // requested id, or the request was sent to a
 // non-existent address.
@@ -25,6 +28,7 @@ const OKAY_STATUS = 200;
 module.exports = {
   BAD_REQUEST,
   UNAUTH_REQUEST,
+  UNAUTH_USER,
   NOT_FOUND,
   CONFLICTING_REQ,
   DEFAULT,

@@ -12,8 +12,11 @@ const {
 } = require("../utils/errors");
 
 const getUser = (req, res) => {
-  const { userId } = req;
-  User.findById(userId)
+  console.log(req.user._id);
+  // const { userId } = req.user._id;
+  // console.log(userId);
+
+  User.findById(req.user._id)
     .orFail()
     // method is used to throw
     // an error if a query doesn't return any documents
@@ -98,10 +101,7 @@ const createUser = (req, res) => {
 
 //signin
 const login = (req, res) => {
-  // const { email } = req.body.email;
-  // const { password } = req.body.password;
   const { email, password } = req.body;
-  console.log(`email: ${email}, password: ${password}`);
 
   if (!email || !password) {
     return res
@@ -118,7 +118,6 @@ const login = (req, res) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      console.log(`Generated Token: ${token}`); // Log generated token
       res.send({ token });
     })
     .catch((err) => {
