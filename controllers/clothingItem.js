@@ -82,9 +82,10 @@ const deleteItem = (req, res) => {
           .status(UNAUTH_USER)
           .send({ message: "You are not authorized to delete this item" });
       }
-      return res.status(OKAY_STATUS).send(item);
+      return ClothingItem.findByIdAndDelete(itemId).then((deletedItem) =>
+        res.send(deletedItem)
+      );
     })
-    .then((deletedItem) => res.send(deletedItem))
     .catch((e) => {
       if (e.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: e.message });
