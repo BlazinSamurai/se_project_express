@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const User = require("../models/user");
 const { JWT_SECRET } = require("../utils/config");
 const {
   OKAY_STATUS, // 200
@@ -21,9 +21,7 @@ const getUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        return res
-          .status(NOT_FOUND)
-          .send({ message: err.message + "req: " + req.body.avatar });
+        return res.status(NOT_FOUND).send({ message: err.message });
       }
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
@@ -84,7 +82,7 @@ const createUser = (req, res) => {
       });
     })
     .catch((err) => {
-      if (err.code == 11000) {
+      if (err.code === 11000) {
         return res
           .status(CONFLICTING_REQ)
           .send({ message: "Duplicatation Error." });

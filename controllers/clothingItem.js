@@ -82,6 +82,7 @@ const deleteItem = (req, res) => {
           .status(UNAUTH_USER)
           .send({ message: "You are not authorized to delete this item" });
       }
+      return res.status(OKAY_STATUS).send(item);
     })
     .then((deletedItem) => res.send(deletedItem))
     .catch((e) => {
