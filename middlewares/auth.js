@@ -10,9 +10,7 @@ const handleAuthError = (res) => {
   });
 };
 
-const extractBearerToken = (header) => {
-  return header.replace("Bearer ", "");
-};
+const extractBearerToken = (header) => header.replace("Bearer ", "");
 
 // If there are no issues with the token,
 // the middleware should add the token payload
