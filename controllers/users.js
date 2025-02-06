@@ -1,21 +1,17 @@
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
 const {
-  OKAY_STATUS, //200
-  BAD_REQUEST, //400
-  UNAUTH_REQUEST, //401
-  NOT_FOUND, //404
-  CONFLICTING_REQ, //409
-  DEFAULT, //500
+  OKAY_STATUS, // 200
+  BAD_REQUEST, // 400
+  UNAUTH_REQUEST, // 401
+  NOT_FOUND, // 404
+  CONFLICTING_REQ, // 409
+  DEFAULT, // 500
 } = require("../utils/errors");
 
 const getUser = (req, res) => {
-  console.log(req.user._id);
-  // const { userId } = req.user._id;
-  // console.log(userId);
-
   User.findById(req.user._id)
     .orFail()
     // method is used to throw
@@ -41,7 +37,7 @@ const getUser = (req, res) => {
 const patchCurrentUser = (req, res) => {
   const { name, avatar } = req.body;
 
-  //This route should only allow modification of the name and avatar fields.
+  // This route should only allow modification of the name and avatar fields.
   User.findByIdAndUpdate(
     req.user._id,
     { name, avatar },
@@ -54,13 +50,17 @@ const patchCurrentUser = (req, res) => {
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
+      if (err.name === "ValidationError") {
+        // send the 400 error
+        return res.status(BAD_REQUEST).send({ message: err.message });
+      }
       return res
         .status(DEFAULT)
         .send({ message: "An error has occurred on the server." });
     });
 };
 
-//signup
+// signup
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
 
@@ -82,10 +82,9 @@ const createUser = (req, res) => {
         email: user.email,
         _id: user._id,
       });
-      // res.send(user);
     })
     .catch((err) => {
-      if (err.code == "11000") {
+      if (err.code == 11000) {
         return res
           .status(CONFLICTING_REQ)
           .send({ message: "Duplicatation Error." });
@@ -99,7 +98,7 @@ const createUser = (req, res) => {
     });
 };
 
-//signin
+// signin
 const login = (req, res) => {
   const { email, password } = req.body;
 
@@ -111,10 +110,10 @@ const login = (req, res) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      //authentication successful!
-      //the controller should create a JSON web token (JWT) that expires after a week
-      //JWT_SECRET contains a value of your secret key for the signature
-      //Once the JWT has been created, it should be sent to the client.
+      // authentication successful!
+      // the controller should create a JSON web token (JWT) that expires after a week
+      // JWT_SECRET contains a value of your secret key for the signature
+      // Once the JWT has been created, it should be sent to the client.
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
@@ -125,7 +124,7 @@ const login = (req, res) => {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
       if (err.message === "Incorrect email or password") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+        return res.status(UNAUTH_REQUEST).send({ message: err.message });
       }
       return res
         .status(DEFAULT)
