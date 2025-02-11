@@ -21,7 +21,8 @@ module.exports = (req, res, next) => {
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
     console.error("Authorization header missing or incorrectly formatted.");
-    return handleAuthError(res);
+    handleAuthError(res);
+    return;
   }
 
   // getting the token
@@ -32,12 +33,11 @@ module.exports = (req, res, next) => {
     // trying to verify the token
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
-    return handleAuthError(res);
+    handleAuthError(res);
+    return;
   }
 
   req.user = payload; // adding the payload to the Request object
 
   next(); // passing the request further along
-
-  return;
 };
