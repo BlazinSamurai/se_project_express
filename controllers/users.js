@@ -60,24 +60,27 @@ const patchCurrentUser = (req, res) => {
 
 // signup
 const createUser = (req, res) => {
-  const { name, avatar, email, password } = req.body;
+  const { email, password, name, avatar } = req.body;
 
+  //error might be in auth.js in react project
+  console.log("In createUser, express.");
+  console.log(req.body);
   // hashing the password
   bcrypt
     .hash(password, 10)
     .then((hash) =>
       User.create({
-        name,
-        avatar,
         email,
         password: hash, // adding the hash to the database
+        name,
+        avatar,
       })
     )
     .then((user) => {
       res.status(OKAY_STATUS).send({
+        email: user.email,
         name: user.name,
         avatar: user.avatar,
-        email: user.email,
         _id: user._id,
       });
     })
@@ -90,9 +93,9 @@ const createUser = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(BAD_REQUEST).send({ message: err.message });
       }
-      return res
-        .status(DEFAULT)
-        .send({ message: "An error has occurred on the server." });
+      return res.status(DEFAULT).send({
+        message: "An error has occurred on the server." + err.message,
+      });
     });
 };
 

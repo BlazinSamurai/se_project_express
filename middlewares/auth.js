@@ -6,7 +6,7 @@ const { UNAUTH_REQUEST } = require("../utils/errors");
 
 const handleAuthError = (res) => {
   res.status(UNAUTH_REQUEST).send({
-    message: "Authorization Error, from handleAuthError in auth.js",
+    message: "Authorization Error, from handleAuthError in auth.js ",
   });
 };
 
@@ -15,15 +15,20 @@ const extractBearerToken = (header) => header.replace("Bearer ", "");
 // If there are no issues with the token,
 // the middleware should add the token payload
 // to the user object and call next()
+
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
-  // console.log(`Authorization header: ${authorization}`); // Log incoming header
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
+    console.log(
+      "Bad authorization: " + JSON.stringify(req.headers.authorization)
+    );
     console.error("Authorization header missing or incorrectly formatted.");
     handleAuthError(res);
     return;
   }
+  //
+  console.log("Good authorization: " + JSON.stringify(req.headers));
 
   // getting the token
   const token = extractBearerToken(authorization);
