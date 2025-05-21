@@ -16,28 +16,14 @@ const extractBearerToken = (header) => header.replace("Bearer ", "");
 // the middleware should add the token payload
 // to the user object and call next()
 
-console.log("TEST: 1");
-
 module.exports = (req, res, next) => {
-  console.log("req.headers: _____________________________________");
-  console.log(req.headers);
   const { authorization } = req.headers;
-  console.log(
-    "authorization: _____________________________________" + authorization
-  );
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
-    console.log(
-      "Bad authorization: " + JSON.stringify(req.headers.authorization)
-    );
     console.error("Authorization header missing or incorrectly formatted.");
     handleAuthError(res);
     return;
   }
-  console.log(
-    "Good authorization: _____________________________________" +
-      JSON.stringify(req.headers)
-  );
 
   // getting the token
   const token = extractBearerToken(authorization);

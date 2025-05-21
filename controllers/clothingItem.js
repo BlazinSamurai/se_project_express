@@ -8,12 +8,11 @@ const {
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
+  console.log(req.body);
+  console.log(req);
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
 
-  // name, weather, and imageUrl are the only thing that should
-  // come from the req.body
-  // eventually add like and createdAt properties below
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
       res.status(OKAY_STATUS).send({ data: item });

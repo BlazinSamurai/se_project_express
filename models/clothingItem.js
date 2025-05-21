@@ -27,9 +27,9 @@ const clothingItemSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
-  // Bottom two elements are NOT required
-  likes: {
-    type: { type: mongoose.Schema.Types.ObjectId },
+  isLiked: {
+    type: Boolean,
+    default: false,
   },
   createdAt: {
     type: Date,
