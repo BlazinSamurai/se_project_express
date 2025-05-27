@@ -9,6 +9,7 @@ const {
 } = require("../controllers/clothingItem");
 
 // C.R.U.D
+// /items then "..." whatever you want for your URL
 // Create
 router.post("/", auth, createItem);
 // Read
