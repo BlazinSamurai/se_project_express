@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const mainRouter = require("./routes/index");
 const errorHandler = require("./middlewares/errorHandler");
+const { errors } = require("celebrate");
 
 // const PORT = process.env.PORT || 3001;
 const { PORT = 3001 } = process.env;
@@ -33,6 +34,10 @@ app.use(cors());
 // Main Router
 app.use("/", mainRouter);
 
+// celebrate error handler
+app.use(errors());
+
+// our centralized handler
 app.use(errorHandler);
 
 app.listen(PORT, () => {

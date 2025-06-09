@@ -1,6 +1,10 @@
 const router = require("express").Router();
 const auth = require("../middlewares/auth");
 const {
+  validateCardBody,
+  validateItemId,
+} = require("../middlewares/validation");
+const {
   createItem,
   getItems,
   likeItem,
@@ -11,13 +15,13 @@ const {
 // C.R.U.D
 // /items then "..." whatever you want for your URL
 // Create
-router.post("/", auth, createItem);
+router.post("/", auth, validateCardBody, createItem);
 // Read
 router.get("/", getItems);
 // Update
-router.put("/:itemId/likes", auth, likeItem);
+router.put("/:itemId/likes", auth, validateItemId, likeItem);
 // Delete
-router.delete("/:itemId", auth, deleteItem);
-router.delete("/:itemId/likes", auth, unlikeItem);
+router.delete("/:itemId", auth, validateItemId, deleteItem);
+router.delete("/:itemId/likes", auth, validateItemId, unlikeItem);
 
 module.exports = router;
