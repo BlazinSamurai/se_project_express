@@ -4,14 +4,14 @@ const User = require("../models/user");
 const { JWT_SECRET } = require("../utils/config");
 const {
   OKAY_STATUS, // 200
-  BAD_REQUEST, // 400
-  UNAUTH_REQUEST, // 401
-  NOT_FOUND, // 404
-  CONFLICTING_REQ, // 409
-  DEFAULT, // 500
 } = require("../utils/errors");
+const { BadRequestError } = require("../utils/errors/badRequestError");
+const { NotFoundError } = require("../utils/errors/notFoundError");
+const { ConflictError } = require("../utils/errors/conflictError");
+const { ForbiddenError } = require("../utils/errors/forbiddenError");
+const { UnauthorizedError } = require("../utils/errors/UnauthorizedError");
 
-const getUser = (req, res) => {
+const getUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail()
     // method is used to throw
@@ -21,18 +21,16 @@ const getUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: err.message });
+        return next(new NotFoundError(err.message));
       }
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+        return next(new BadRequestError(err.message));
       }
-      return res
-        .status(DEFAULT)
-        .send({ message: "An error has occurred on the server." });
+      return next(err);
     });
 };
 
-const patchCurrentUser = (req, res) => {
+const patchCurrentUser = (req, res, next) => {
   const { name, avatar } = req.body;
 
   // This route should only allow modification of the name and avatar fields.
@@ -46,67 +44,61 @@ const patchCurrentUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+        return next(new BadRequestError(err.message));
       }
       if (err.name === "ValidationError") {
-        // send the 400 error
-        return res.status(BAD_REQUEST).send({ message: err.message });
+        return next(new UnauthorizedError(err.message));
       }
-      return res
-        .status(DEFAULT)
-        .send({ message: "An error has occurred on the server." });
+      return next(err);
     });
 };
 
 // signup
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { email, password, name, avatar } = req.body;
 
-  //error might be in auth.js in react project
-  console.log("In createUser, express.");
-  console.log(req.body);
-  // hashing the password
-  bcrypt
-    .hash(password, 10)
-    .then((hash) =>
-      User.create({
-        email,
-        password: hash, // adding the hash to the database
-        name,
-        avatar,
-      })
-    )
-    .then((user) => {
-      res.status(OKAY_STATUS).send({
-        email: user.email,
-        name: user.name,
-        avatar: user.avatar,
-        _id: user._id,
-      });
+  if (!email) {
+    return next(new BadRequestError("Email is required"));
+  }
+  if (!password) {
+    return next(new BadRequestError("Password is required"));
+  }
+  return User.findOne({ email })
+    .then((existingUser) => {
+      if (existingUser) {
+        return next(new ConflictError("This email already exists"));
+      }
+      return bcrypt.hash(password, 10).then((hash) =>
+        User.create({ name, avatar, email, password: hash }).then((user) =>
+          res.status(OKAY_STATUS).send({
+            name: user.name,
+            avatar: user.avatar,
+            email: user.email,
+            _id: user._id,
+          })
+        )
+      );
     })
     .catch((err) => {
       if (err.code === 11000) {
-        return res
-          .status(CONFLICTING_REQ)
-          .send({ message: "Duplicatation Error." });
+        return next(new ConflictError("Duplication error."));
       }
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+        return next(new BadRequestError("Invalid data."));
       }
-      return res.status(DEFAULT).send({
-        message: "An error has occurred on the server." + err.message,
-      });
+      if (err.code === 403) {
+        return next(new ForbiddenError(err.message));
+      }
+      return next(err);
     });
 };
 
 // signin
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res
-      .status(BAD_REQUEST)
-      .send({ message: "Email and password must be provided." });
+    return next(new BadRequestError("Email and Password fields are required."));
   }
 
   return User.findUserByCredentials(email, password)
@@ -122,14 +114,12 @@ const login = (req, res) => {
     })
     .catch((err) => {
       if (err.name === "ReferenceError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+        return next(new BadRequestError(err.message));
       }
       if (err.message === "Incorrect email or password") {
-        return res.status(UNAUTH_REQUEST).send({ message: err.message });
+        return next(new UnauthorizedError(err.message));
       }
-      return res
-        .status(DEFAULT)
-        .send({ message: "An error has occurred on the server." });
+      return next(err);
     });
 };
 

@@ -1,15 +1,10 @@
 const ClothingItem = require("../models/clothingItem");
-const {
-  UNAUTH_USER,
-  BAD_REQUEST,
-  NOT_FOUND,
-  DEFAULT,
-  OKAY_STATUS,
-} = require("../utils/errors");
+const { OKAY_STATUS } = require("../utils/errors");
+const { BadRequestError } = require("../utils/errors/badRequestError");
+const { NotFoundError } = require("../utils/errors/notFoundError");
+const { ForbiddenError } = require("../utils/errors/forbiddenError");
 
-const createItem = (req, res) => {
-  console.log(req.body);
-  console.log(req);
+const createItem = (req, res, next) => {
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
 
@@ -18,28 +13,26 @@ const createItem = (req, res) => {
       res.status(OKAY_STATUS).send({ data: item });
     })
     .catch((e) => {
+      console.error(e);
       if (e.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: e.message });
+        return next(new BadRequestError(e.message));
       }
-      return res.status(DEFAULT).send({
-        message: "An error has occurred on the server.",
-      });
+      return next(e);
     });
 };
 
-const getItems = (req, res) => {
+const getItems = (req, res, next) => {
   ClothingItem.find({})
     .then((items) => {
       res.status(OKAY_STATUS).send(items);
     })
-    .catch(() =>
-      res
-        .status(DEFAULT)
-        .send({ message: "An error has occurred on the server." })
-    );
+    .catch((e) => {
+      console.error(e);
+      return next(e);
+    });
 };
 
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   const { itemId } = req.params;
 
   ClothingItem.findByIdAndUpdate(
@@ -55,31 +48,31 @@ const likeItem = (req, res) => {
       res.status(OKAY_STATUS).send({ data: item });
     })
     .catch((e) => {
+      console.error(e);
       if (e.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: e.message });
+        return next(new BadRequestError("Invalid data."));
       }
       if (e.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: e.message });
+        return next(new NotFoundError("Item not found."));
       }
-      return res
-        .status(DEFAULT)
-        .send({ message: "An error has occurred on the server." });
+      return next(e);
     });
 };
 
-const deleteItem = (req, res) => {
+const deleteItem = (req, res, next) => {
   const { itemId } = req.params;
-  const owner = req.user._id; // Ensure this is correctly set by middleware
+  const owner = req.user._id;
 
   ClothingItem.findById(itemId)
+    .orFail()
     .then((item) => {
       if (!item) {
-        return res.status(NOT_FOUND).send({ message: "Item not found." });
+        return next(new NotFoundError("Item not found."));
       }
       if (item.owner.toString() !== owner.toString()) {
-        return res
-          .status(UNAUTH_USER)
-          .send({ message: "You are not authorized to delete this item" });
+        return next(
+          new ForbiddenError("You are not authorized to delete this item.")
+        );
       }
       return ClothingItem.findByIdAndDelete(itemId).then((deletedItem) =>
         res.send(deletedItem)
@@ -87,15 +80,13 @@ const deleteItem = (req, res) => {
     })
     .catch((e) => {
       if (e.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: e.message });
+        return next(new BadRequestError("Invalid ID format."));
       }
-      return res
-        .status(DEFAULT)
-        .send({ message: "An error has occurred on the server." });
+      return next(e);
     });
 };
 
-const unlikeItem = (req, res) => {
+const unlikeItem = (req, res, next) => {
   const { itemId } = req.params;
 
   ClothingItem.findByIdAndUpdate(
@@ -112,14 +103,12 @@ const unlikeItem = (req, res) => {
     })
     .catch((e) => {
       if (e.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: e.message });
+        return next(new BadRequestError("Invalid data."));
       }
       if (e.name === "DocumentNotFoundError") {
-        return res.status(NOT_FOUND).send({ message: e.message });
+        return next(new NotFoundError(e.message));
       }
-      return res
-        .status(DEFAULT)
-        .send({ message: "An error has occurred on the server." });
+      return next(e);
     });
 };
 
