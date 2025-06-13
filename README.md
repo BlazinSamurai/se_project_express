@@ -6,12 +6,12 @@ The server is created with models, routes, controllers, and other varies technol
 
 ## This project relied on these technologies or applications
 
--Javascript
--Express.js
--ESLint
--Postman
--MongoDB
--CORS was also installed, which will be used in connecting the front and backend parts of the WTWR app.
+- Javascript
+- Express.js
+- ESLint
+- Postman
+- MongoDB
+- CORS was also installed, which will be used in connecting the front and backend parts of the WTWR app.
 
 ## The following domains are used for the project:
 
