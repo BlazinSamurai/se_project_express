@@ -7,13 +7,21 @@ The server is created with models, routes, controllers, and other varies technol
 ## This project relied on these technologies or applications
 
 *Javascript
-*express
+*Express.js
 *ESLint
 *Postman
 *MongoDB
 *CORS was also installed, which will be used in connecting the front and backend parts of the WTWR app.
 
-## Running the Project
+## The following domains are used for the project:
+
+api.yourdigitalcloset.csproject.org
+
+yourdigitalcloset.csproject.org
+
+www.yourdigitalcloset.csproject.org
+
+## Running the Project on a local machine:
 
 `npm run start` — to launch the server
 
