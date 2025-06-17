@@ -6,7 +6,6 @@ const { OKAY_STATUS } = require("../utils/errors");
 const { BadRequestError } = require("../utils/errors/badRequestError");
 const { NotFoundError } = require("../utils/errors/notFoundError");
 const { ConflictError } = require("../utils/errors/conflictError");
-const { ForbiddenError } = require("../utils/errors/forbiddenError");
 const { UnauthorizedError } = require("../utils/errors/UnauthorizedError");
 
 const getUser = (req, res, next) => {
