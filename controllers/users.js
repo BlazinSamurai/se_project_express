@@ -84,9 +84,6 @@ const createUser = (req, res, next) => {
       if (err.name === "ValidationError") {
         return next(new BadRequestError("Invalid data."));
       }
-      if (err.code === 403) {
-        return next(new ForbiddenError(err.message));
-      }
       return next(err);
     });
 };

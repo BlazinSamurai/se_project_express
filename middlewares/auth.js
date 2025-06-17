@@ -2,12 +2,10 @@
 // It should verify the token from the headers
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
-const { UNAUTH_REQUEST } = require("../utils/errors");
+const { UnauthorizedError } = require("../utils/errors/UnauthorizedError");
 
-const handleAuthError = (res) => {
-  res.status(UNAUTH_REQUEST).send({
-    message: "Authorization Error, from handleAuthError in auth.js ",
-  });
+const handleAuthError = (res, req, next) => {
+  next(new UnauthorizedError("Authorization Error: Unauthorized."));
 };
 
 const extractBearerToken = (header) => header.replace("Bearer ", "");

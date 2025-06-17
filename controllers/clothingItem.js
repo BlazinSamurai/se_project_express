@@ -82,6 +82,9 @@ const deleteItem = (req, res, next) => {
       if (e.name === "CastError") {
         return next(new BadRequestError("Invalid ID format."));
       }
+      if (e.name === "DocumentNotFoundError") {
+        return next(new NotFoundError(e.message));
+      }
       return next(e);
     });
 };
