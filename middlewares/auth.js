@@ -19,7 +19,7 @@ module.exports = (req, res, next) => {
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
     console.error("Authorization header missing or incorrectly formatted.");
-    handleAuthError(res);
+    handleAuthError(req, res, next);
     return;
   }
 
@@ -31,7 +31,7 @@ module.exports = (req, res, next) => {
     // trying to verify the token
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
-    handleAuthError(res);
+    handleAuthError(req, res, next);
     return;
   }
 
